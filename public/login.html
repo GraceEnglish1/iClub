@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>iClub</title>
+  <script src="https://unpkg.com/vue@2"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="./javascripts/login.js" defer></script>
+  <script src="./javascripts/ajax.js" defer></script>
+
+</head>
+<body>
+  <div class="login" id="login">
+    <br/>
+    <img src="./images/University-of-Adelaide-Logo.svg.png" alt="University of Adelaide Logo" :src="'./images/University-of-Adelaide-Logo.svg.png'" :alt="'University of Adelaide Logo'">
+    <h1>Welcome to  iClub!</h1>
+    <p v-if="signed_up == true"><strong>Thanks for signing up! Please login</strong></p>
+    <div>
+    <div class="login" id="userDetails">
+      <form class="pure-form">
+        <label class="userDetails">Email: </label><input type="text" v-model="email" placeholder="Enter your email" class="pure-input-rounded" />
+        <br>
+      <label class="userDetails">Password: </label><input type="password" v-model="pass" placeholder="Enter your password" class="pure-input-rounded" />
+      </form>
+      <br>
+      <button class="login" v-on:click="login()" type="button">Login</button>
+      <button class="login" v-if="loggedin == true" v-on:click="loadHomePage()" type="button">Enter Website</button>
+      <br class="login_break"/>
+      <div class="vertical-center">
+        <div id="g_id_onload"
+            data-client_id="777390567095-m2jtui5tvtuaut3ks0jkmuka9lmjobue.apps.googleusercontent.com"
+            data-context="signin"
+            data-ux_mode="popup"
+            data-callback="google_login"
+            data-auto_prompt="false"
+            style="	display:block;
+            text-align: center;
+            justify-content: center;">
+        </div>
+        <div class="g_id_signin"
+            data-type="standard"
+            data-shape="pill"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="medium"
+            data-logo_alignment="left">
+        </div>
+    </div>
+    </div>
+    <p v-if="loggedin != true"><a href="http://localhost:8080/home.html">Enter as Guest</a></p>
+    <br>
+    <hr>
+    <p>Not a user? Signup!</p>
+    <button class="login" v-on:click="signing_up = true; getDegrees()" type="button">Signup</button>
+  </div>
+  <hr>
+    <div v-if="signing_up">
+      <div class="login">
+        <p>User Details: </p>
+        <br>
+        <form class="pure-form">
+          <label>First Name: </label><input type="text" v-model="new_user.first_name" placeholder="Enter your first name" class="pure-input-rounded" />
+          <br>
+          <label>Last Name: </label><input type="text" v-model="new_user.last_name" placeholder="Enter your last name" class="pure-input-rounded" />
+          <br>
+          <label>Email: </label><input type="text" v-model="new_user.email" placeholder="Enter your email" class="pure-input-rounded" />
+          <br>
+          <label>Password: </label><input type="password" v-model="new_user.pass" placeholder="Enter your password" class="pure-input-rounded" />
+        </form>
+        <br>
+        <p>Uni Details: </p>
+        <br>
+          <p>Degree:
+              <select v-model="new_user.degree">
+                <option v-for="d in degrees" :value="d.id"> {{ d.name }}</option>
+              </select>
+            </p>
+            <p>Year Level:
+              <select v-model="new_user.year_level">
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+                <option value=6>6</option>
+              </select>
+            </p>
+        <br>
+        <button class="login" v-on:click="signup(); signing_up = false; signed_up = true;" type="button">Signup!</button>
+        </div>
+    </div>
+  </div>
+</body>
+</html>

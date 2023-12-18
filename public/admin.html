@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>iClub</title>
+  <script src="https://unpkg.com/vue@2"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="./javascripts/admin.js" defer></script>
+  <script src="./javascripts/ajax.js" defer></script>
+</head>
+<body>
+	<div id="admin">
+		<nav v-if="has_account === false">
+		  <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		</nav>
+		<nav v-else-if="user_permissions === 2">
+		  <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+		</nav>
+		<nav v-else="user_permissions === 1">
+		  <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+		  <p><a href="http://localhost:8080/admin.html">Admin</a></p>
+		</nav>
+    <div class="club_info">
+      <p v-if="isAdmin === false"> You do not have permission to view this page.</p>
+      <div class="pure-g" v-if="isAdmin === true">
+        <div class="pure-u-5-24"><p></p></div>
+        <div class="pure-u-3-24">
+          <br/>
+          <div class="pure-menu custom-restricted-width">
+            <span class="pure-menu-heading">Admin</span>
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="#" class="pure-menu-link" v-on:click="showUsers = true; showClubs = false;">Manage Users</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="#" class="pure-menu-link" v-on:click="showClubs = true; showUsers = false;">Manage Clubs</a>
+                </li>
+            </ul>
+        </div>
+        </div>
+        <div class="pure-u-1-24"></div>
+        <div class="pure-u-11-24">
+            <br>
+            <h2 v-if="showClubs == true">Manage All Clubs</h2>
+            <div v-if="showClubs == true" v-for="c in clubs">
+              <div class="pure-u-8-24">
+              <p style="display: inline;"> {{ c.name }} </p>
+              </div>
+              <div class="pure-u-6-24">
+              <button  v-on:mouseover="changeClub(c.id)" v-on:click="loadClubSearch()" style="display: inline;" type="button">View</button>
+              </div>
+              <div class="pure-u-6-24">
+              <button class="delete" v-on:mouseover="changeClub(c.id)" v-on:click="deleteClubs(c.id)" type="button">Delete</button>
+              </div>
+              <br>
+            </div>
+            <h2 v-if="showUsers == true">Manage All Users</h2>
+            <div v-if="showUsers == true" v-for="u in users">
+              <div class="pure-u-8-24">
+              <p style="display: inline;"> {{ u.first_name }} {{ u.last_name }} </p>
+              </div>
+              <div class="pure-u-6-24">
+              <button v-if="u.permissions == 1" v-on:click="setPermissions(u.id,2)" style="display: inline;" type="button">Set User</button>
+              <button v-if="u.permissions == 2" v-on:click="setPermissions(u.id,1)" style="display: inline;" type="button">Set Admin</button>
+              </div>
+              <div class="pure-u-6-24">
+              <button class="delete" v-on:click="deleteUser(u.id)" type="button">Delete</button>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+        <div class="pure-u-3-24"><p></p></div>
+        </div>
+    </div>
+</body>
+</html>

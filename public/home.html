@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>iClub</title>
+  <script src="https://unpkg.com/vue@2"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="./javascripts/home.js" defer></script>
+</head>
+<body>
+  <div id="home">
+		<nav v-if="has_account === false">
+		  <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		</nav>
+    <nav v-else-if="user_permissions === 2">
+      <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+      <p><a href="http://localhost:8080/home.html">Home </a></p>
+      <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+      <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+    </nav>
+    <nav v-else="user_permissions === 1">
+      <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+      <p><a href="http://localhost:8080/home.html">Home </a></p>
+      <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+      <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+      <p><a href="http://localhost:8080/admin.html">Admin</a></p>
+    </nav>
+      <div class="home">
+        <h1>Socialise | Connect | Expand</h1>
+      <div class="home">
+        <br/>
+        <img src="./images/sports_image.jpg" :src="'./images/sports_image.jpg'" alt="Sports Image" :alt="'Sports Image'">
+        <br/>
+        <button v-on:click="loadClubSearch()" class="find" type="button">Find Clubs</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>iClub</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="./javascripts/search.js" defer></script>
+  <script src="./javascripts/ajax.js" defer></script>
+</head>
+<body >
+	<div id="app">
+		<nav v-if="has_account === false">
+			<img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+			<p><a href="http://localhost:8080/home.html">Home </a></p>
+			<p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  </nav>
+		<nav v-else-if="user_permissions === 2">
+		  <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+		</nav>
+		<nav v-else="user_permissions === 1">
+			<img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+		  <p><a href="http://localhost:8080/admin.html">Admin</a></p>
+		</nav>
+	<div class="search" v-on:load="getAllClubs()">
+		<br/>
+		<div class="pure-g">
+			<div class="pure-u-1-5"><p></p></div>
+			<div class="pure-u-2-3">
+				<i class="fi fi-ro-square-right"></i>
+				<p class="club_filter">Filter by Category: </p>
+				<select v-model="type" v-on:change="getClubs(type)" class="club_filter" id="stacked-state">
+					<option value=1>Sports</option>
+					<option value=2>Academic</option>
+					<option value=3>Other</option>
+				</select>
+				<br>
+				<br/>
+				<p v-if="type === 123"> Select from the dropdown above to browse clubs by type</p>
+				<div v-for="c in clubs" class="club_snapshot">
+					<a v-on:mouseover="changeClub(c.id)" href = "http://localhost:8080/club_info.html" ><img v-bind:src="c.image_reference" v-bind:alt="c.image_alt"></a>
+					<p><strong> {{ c.name }} </strong></p>
+					<p> {{ c.short_bio }} </p>
+				</div>
+			</div>
+			<div class="pure-u-1-5"><p></p></div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+

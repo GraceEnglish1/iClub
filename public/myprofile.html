@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>iClub</title>
+  <script src="https://unpkg.com/vue@2"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="./javascripts/myprofile.js" defer></script>
+  <script src="./javascripts/ajax.js" defer></script>
+</head>
+<body>
+	<div id="profile">
+		<nav v-if="has_account === false">
+		  <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		</nav>
+		<nav v-else-if="user_permissions === 2">
+		  <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+		</nav>
+		<nav v-else="user_permissions === 1">
+		  <img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+		  <p><a href="http://localhost:8080/admin.html">Admin</a></p>
+		</nav>
+    <p v-if="has_account === false">You do not have permission to view this page.</p>
+    <div class="club_info"  v-if="has_account === true">
+      <div class="pure-g">
+        <div class="pure-u-5-24"><p></p></div>
+        <div class="pure-u-3-24">
+          <br/>
+          <img class="profile_avatar" src="./images/person_icon.png" :src="'./images/person_icon.png'" alt="Sports Icon" :alt="'Sports Icon'">
+        </div>
+        <div class="pure-u-1-24"></div>
+        <div class="pure-u-11-24">
+          <br />
+          <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+          <p>Year Level: {{ user.year_level }} </p>
+          <p>Degree: {{ user.degree_name }} </p>
+          <button type="button" v-if="modalOpen === false" v-on:click="modalOpen = true; getDegrees()">Edit</button>
+          <button type="button" v-if="modalOpen === true" v-on:click="modalOpen = false">Hide</button>
+          <div class="pure-u-24-24">
+            <div v-if="modalOpen === true" >
+            <p style="display: inline;" >First Name: </p>
+            <form class="pure-form">
+              <input type="text" v-model="user.first_name" class="pure-input" style="display: inline;"/>
+            </form>
+            <br>
+            <p style="display: inline;">Last Name:</p>
+            <form class="pure-form">
+              <input type="text" v-model="user.last_name" class="pure-input" style="display: inline;"/>
+            </form>
+            <p>Degree:
+              <select v-model="user.degree">
+                <option v-for="d in degrees" :value="d.id"> {{ d.name }}</option>
+              </select>
+            </p>
+            <p>Year Level:
+              <select v-model="user.year_level">
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+                <option value=6>6</option>
+              </select>
+            </p>
+            <button type="button" v-on:click="updateProfile(); reload = true">Save</button>
+            <button type="button" v-if="reload == true" v-on:click="loadMyProfile()">Reload Page</button>
+            </div>
+            <br>
+            <hr>
+            <h2>Clubs</h2>
+            <div v-for="c in clubs">
+              <h3 style="display: inline; padding: 2px;"> {{ c.name }}</h3>
+              <br>
+              <div class="pure-u-12-24">
+              <button  v-on:mouseover="changeClub(c.id)" v-on:click="loadClubSearch()" style="display: inline;" type="button">View</button>
+              <button class="delete" v-on:mouseover="changeClub(c.id)" v-on:click="deleteMemberships()" type="button">Leave</button>
+              <p>Sign up to be emailed for new events or updates!</p>
+              <button style="display: inline;" v-if="c.updates_opt_in == 0" v-on:mouseover="changeClub(c.id)" v-on:click="setUpdatesOptin(1)" type="button">Opt-in: Updates</button>
+              <button class="delete" v-if="c.updates_opt_in == 1" v-on:mouseover="changeClub(c.id)" v-on:click="setUpdatesOptin(0)" type="button">Opt-out: Updates</button>
+              <button style="display: inline;" v-if="c.events_opt_in == 0" v-on:mouseover="changeClub(c.id)" v-on:click="setEventsOptin(1)" type="button">Opt-in: Events</button>
+              <button class="delete" v-if="c.events_opt_in == 1" v-on:mouseover="changeClub(c.id)" v-on:click="setEventsOptin(0)" type="button">Opt-out: Events</button>
+              <hr>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+        <div class="pure-u-3-24"><p></p></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

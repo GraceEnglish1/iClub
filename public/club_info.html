@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>iClub</title>
+  <script src="https://unpkg.com/vue@2"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="./javascripts/components.js" defer></script>
+</head>
+<body>
+	<div id="app">
+		<nav v-if="has_account === false">
+			<img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		</nav>
+		<nav v-else-if="user_permissions === 2">
+			<img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+		</nav>
+		<nav v-else="user_permissions === 1">
+			<img src="./images/small_adelaide_logo.png" :src="'./images/small_adelaide_logo.png'" alt="University of Adelaide Logo" :alt="'University of Adelaide Logo'"/>
+		  <p><a href="http://localhost:8080/home.html">Home </a></p>
+		  <p><a href="http://localhost:8080/clubs.html">Clubs </a></p>
+		  <p><a href="http://localhost:8080/myprofile.html">My Profile</a></p>
+		  <p><a href="http://localhost:8080/admin.html">Admin</a></p>
+		</nav>
+  <div class="club_info" v-on:load="getClubInfo()">
+    <div class="pure-g">
+			<div class="pure-u-3-24"><p></p></div>
+			<div class="pure-u-7-24">
+        <br/>
+        <div v-for="c in clubs_info" class="club_profile_image">
+					<img v-bind:src="c.image_reference" v-bind:alt="c.image_alt" style="max-width: 100%;">
+					<h2> {{ c.name }} </h2>
+					<p> {{ c.long_bio }} </p>
+				</div>
+        <p v-if="isManager == true"><strong>Members are below:</strong></p>
+        <div v-if="isManager == true" v-for="m in members">
+					<p> {{ m.first_name }} {{ m.last_name }} </p>
+				</div>
+      </div>
+      <div class="pure-u-1-24"></div>
+      <div class="pure-u-11-24">
+        <br />
+        <button v-if="isJoined === false && has_account === true" v-on:click="joinClub()" type="button">
+          Join Club
+        </button>
+        <button v-if="isJoined == true" class="pure-button-disabled" type="button">
+          Thanks for Joining!
+        </button>
+        <h2>Events</h2>
+        <button style="display: block" v-if="isManager == 1 && modalOpen === false" type="button" v-on:click="modalOpen = true;" >+ Event</button>
+        <div v-if="modalOpen == true">
+          <button type="button" v-on:click="modalOpen = false;" >Hide</button>
+          <br>
+          <form>
+            <label for="form_title">Title</label>
+            <br>
+            <input v-model="newEvent.title" type="text" name="title" id="form_title">
+            <br>
+            <label for="form_date">Date</label>
+            <br>
+            <input v-model="newEvent.post_date" type="text" name="date" id="form_date">
+            <small style="display: block;">Please write correct dates as YYYY-MM-DD or your event will not be created</small>
+            <label for="form_content">Content</label>
+            <br>
+            <input v-model="newEvent.content" type="text" name="content" id="form_content">
+            <br>
+            <input v-model="newEvent.visibility_id" name="visibility_id" type="radio" value=1>
+            <label for="public">Public</label><br>
+            <input v-model="newEvent.visibility_id" name="visibility_id" type="radio" value=2>
+            <label for="private">Private</label><br>
+          </form>
+          <button type="button" v-on:click="ready = true; createEvents(); sendEmail(newEvent.title, newEvent.post_date, newEvent.content, 1);">Save</button>
+          <button type="button" v-if="ready == true" v-on:click="loadClubInfo()">Reload Page</button>
+        </div>
+        <div v-for="e in events" class="pure-u-9-24">
+          <div v-if="e.can_view === true">
+            <p class="event">
+              <strong> {{ e.title }} </strong>
+              <button v-if="e.rsvp != true && isJoined == true" v-on:click="rsvp(e.id)" class="RSVP" type="button">RSVP</button>
+              <button v-if="e.rsvp == true && isJoined == true" class="pure-button-disabled" type="button" >RSVP'd</button>
+            </p>
+            <p class="date">{{ e.post_date }}</p>
+            <p v-if="isManager == 1"> Guest List: {{ e.rsvpListString }} </p>
+            <p> {{ e.content }} </p>
+          </div>
+        </div>
+        <br/>
+        <h2>Updates</h2>
+        <button style="display: block" v-if="isManager == 1 && updateModalOpen === false" type="button" v-on:click="updateModalOpen = true;" >+ Update</button>
+        <div v-if="updateModalOpen == true">
+          <button type="button" v-on:click="updateModalOpen = false;" >Hide</button>
+          <br>
+          <form>
+            <label for="form_title">Title</label>
+            <br>
+            <input v-model="newUpdate.title" type="text" name="title" id="form_title_update">
+            <br>
+            <label for="form_content">Content</label>
+            <br>
+            <input v-model="newUpdate.content" type="text" name="content" id="form_content_update">
+            <br>
+            <input v-model="newUpdate.visibility_id" name="visibility_id" type="radio" value=1>
+            <label for="public">Public</label><br>
+            <input v-model="newUpdate.visibility_id" name="visibility_id" type="radio" value=2>
+            <label for="private">Private</label><br>
+          </form>
+          <button type="button" v-on:click="ready = true; createUpdates(); sendEmail(newUpdate.title, newUpdate.post_date, newUpdate.content, 2); getEvents();">Save</button>
+          <button type="button" v-if="ready == true" v-on:click="loadClubInfo()">Reload Page</button>
+        </div>
+        <div v-for="u in updates" class="pure-u-16-24">
+          <div v-if="u.can_view === true">
+            <p class="event">
+              <strong> {{ u.title }} </strong>
+            </p>
+            <p class="date">{{ u.post_date }}</p>
+            <p> {{ u.content }} </p>
+            <hr />
+          </div>
+        </div>
+      </div>
+
+			<div class="pure-u-3-24"><p></p></div>
+      </div>
+  </div>
+</div>
+</body>
+</html>
