@@ -39,7 +39,7 @@ GRANT ALL PRIVILEGES ON iclub.* TO 'grace'@'localhost';
 \q
 ```
 
-## Inputting data into the database
+## Data
 ### Backup data
 mySQL data dump is in the folder location
 sql -> backup.sql
